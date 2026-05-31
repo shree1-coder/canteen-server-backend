@@ -1,16 +1,13 @@
 const express = require('express');
-const cors = require('cors'); // The security bypass!
+const cors = require('cors'); 
 
 const app = express();
 
-// Allow React to talk to this server
 app.use(cors());
 app.use(express.json());
 
-// This variable holds the live number in memory
 let liveCount = 0;
 
-// --- DOOR 1: FOR THE ESP32 ---
 app.post('/update-count', (req, res) => {
     if (req.body && req.body.count !== undefined) {
         liveCount = req.body.count;
@@ -21,13 +18,13 @@ app.post('/update-count', (req, res) => {
     }
 });
 
-// --- DOOR 2: FOR THE REACT DASHBOARD ---
 app.get('/count', (req, res) => {
-    // React hits this URL every 2 seconds to get the latest number
     res.json({ count: liveCount });
 });
 
-// Listen on all network interfaces
-app.listen(5000, '0.0.0.0', () => {
-    console.log('✅ Canteen Backend is running on port 5000');
+// 🔥 THE CLOUD PORT FIX 🔥
+// This tells the server to use Render's cloud port, OR 5000 if running locally
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`✅ Canteen Backend is running on port ${PORT}`);
 });
